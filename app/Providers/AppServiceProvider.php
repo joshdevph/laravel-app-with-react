@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Services\FinancialDataApiService;
-use App\Services\FinancialDataServiceInterface;
+use App\Services\FinanceDataServiceInterface;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // $this->app->bind(FinancialDataApiService::class, FinancialDataApiService::class);
+        $this->app->bind(FinanceDataServiceInterface::class, FinancialDataApiService::class);
     }
 
     /**
