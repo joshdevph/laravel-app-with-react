@@ -31,15 +31,17 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/company-profile', [FinanceDataController::class, 'indexPage'])->name('finance.index');
-    Route::get('/company-quote', [FinanceDataController::class, 'quotePage'])->name('finance.quote');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // COMPANY PROFILE
+    Route::get('/company-profile', [FinanceDataController::class, 'indexPage'])->name('finance.index');
+    Route::post('/company-profile', [FinanceDataController::class, 'searchCompanyProfile'])->name('finance.search');
 
-    // API
-    Route::post('/api/financial-data/search-profile', [FinanceDataController::class, 'searchCompanyProfile']);
-    Route::post('/api/financial-data/search-quote', [FinanceDataController::class, 'searchCompanyQuote']);
+    // COMPANY QUOTE
+    Route::get('/company-quote', [FinanceDataController::class, 'quotePage'])->name('finance.quote');
+    Route::post('/company-quote', [FinanceDataController::class, 'searchCompanyQuote'])->name('finance.searchquote');
 });
 
 require __DIR__.'/auth.php';

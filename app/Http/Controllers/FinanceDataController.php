@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use App\Services\FinanceDataServiceInterface;
-
+use Illuminate\Support\Facades\Validator;
 class FinanceDataController extends Controller
 {
 
@@ -19,35 +18,56 @@ class FinanceDataController extends Controller
     }
 
     public function indexPage(){
-        $companyDetails = User::All();
         return Inertia::render('Company/Profile',[
-            'user' => $companyDetails
+            'data' => []
         ]);
     }
 
     public function quotePage(){
-        return Inertia::render('Company/Quote',[]);
+        return Inertia::render('Company/Quote',[
+            'data' => []
+        ]);
     }
 
     public function searchCompanyProfile(Request $request)
     {
+        // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
+            'searchTerm' => 'required|string', // Adjust the validation rules as needed
+        ],
+        [
+            'searchTerm.required' => 'Please enter a search term this is required.', // Custom error message
+        ]);
         $searchTerm = $request->input('searchTerm');
-        
         // Fetch data from the Financial Modeling Prep API based on the search term
-        $searchTerm = $request->input('searchTerm');
         $data = $this->financeDataService->searchCompanyProfile($searchTerm);
-
-        return response()->json($data);
+        // return Redirect::route('finance.index')->with(['user' => $user,'data' => $data]);
+        return Inertia::render('Company/Profile',[
+            'data' => $data,
+            'errors' => $validator->errors(),
+        ]);
     }
 
     public function searchCompanyQuote(Request $request)
     {
-        $searchTerm = $request->input('searchTerm');
-        
+        // Validate the incoming request data
+        $validator = Validator::make($request->all(), [
+            'searchTerm' => 'required|string', // Adjust the validation rules as needed
+        ],
+        [
+            'searchTerm.required' => 'Please enter a search term this is required.', // Custom error message
+        ]);
+        // If validation fails, redirect back with errors
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
         // Fetch data from the Financial Modeling Prep API based on the search term
         $searchTerm = $request->input('searchTerm');
         $data = $this->financeDataService->searchCompanyQuote($searchTerm);
 
-        return response()->json($data);
+        return Inertia::render('Company/Quote',[
+            'data' => $data,
+            'errors' => $validator->errors(),
+        ]);
     }
 }
