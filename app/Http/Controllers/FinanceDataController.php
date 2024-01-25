@@ -38,10 +38,9 @@ class FinanceDataController extends Controller
         [
             'searchTerm.required' => 'Please enter a search term this is required.', // Custom error message
         ]);
-        $searchTerm = $request->input('searchTerm');
         // Fetch data from the Financial Modeling Prep API based on the search term
+        $searchTerm = $request->input('searchTerm');
         $data = $this->financeDataService->searchCompanyProfile($searchTerm);
-        // return Redirect::route('finance.index')->with(['user' => $user,'data' => $data]);
         return Inertia::render('Company/Profile',[
             'data' => $data,
             'errors' => $validator->errors(),
@@ -57,10 +56,6 @@ class FinanceDataController extends Controller
         [
             'searchTerm.required' => 'Please enter a search term this is required.', // Custom error message
         ]);
-        // If validation fails, redirect back with errors
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
         // Fetch data from the Financial Modeling Prep API based on the search term
         $searchTerm = $request->input('searchTerm');
         $data = $this->financeDataService->searchCompanyQuote($searchTerm);
